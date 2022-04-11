@@ -1,6 +1,7 @@
 package errors
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"os"
@@ -25,4 +26,8 @@ func IsTimeout(err error) bool {
 	}
 
 	return false
+}
+
+func IsContextStopped(err error) bool {
+	return Is(err, context.Canceled) || Is(err, context.DeadlineExceeded)
 }
