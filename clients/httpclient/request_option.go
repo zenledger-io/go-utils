@@ -2,8 +2,8 @@ package httpclient
 
 import "net/http"
 
-const (
-	jsonContentType = "application/json; charset=utf-8"
+var (
+	ContentTypeJSON = "application/json; charset=utf-8"
 )
 
 type RequestOption interface {
@@ -72,7 +72,7 @@ func (opt RequestContentType) Configure(r *http.Request) *http.Request {
 type RequestJSONContentType struct{}
 
 func (opt RequestJSONContentType) Configure(r *http.Request) *http.Request {
-	return RequestContentType{ContentType: jsonContentType}.Configure(r)
+	return RequestContentType{ContentType: ContentTypeJSON}.Configure(r)
 }
 
 // helpers

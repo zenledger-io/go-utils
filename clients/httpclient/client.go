@@ -84,6 +84,8 @@ func (c *client) SendRequest(ctx context.Context, r *Request, opts ...RequestOpt
 	return c.Do(req, opts...)
 }
 
+// convenience methods
+
 func (c *client) Get(ctx context.Context, url string, opts ...RequestOption) (*http.Response, error) {
 	return c.Send(ctx, http.MethodGet, url, nil, opts...)
 }

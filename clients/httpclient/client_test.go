@@ -41,7 +41,7 @@ func TestClient_Get(t *testing.T) {
 					return
 				}
 
-				if r.Header.Get("Content-Type") != jsonContentType {
+				if r.Header.Get("Content-Type") != ContentTypeJSON {
 					w.WriteHeader(http.StatusBadRequest)
 					return
 				}
