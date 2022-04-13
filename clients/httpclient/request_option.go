@@ -10,6 +10,7 @@ type RequestOption interface {
 	Configure(*http.Request) *http.Request
 }
 
+// RequestSetQuery calls Set on the request URL's query with each key value pair.
 type RequestSetQuery struct {
 	Query map[string]string
 }
@@ -22,6 +23,7 @@ func (opt RequestSetQuery) Configure(r *http.Request) *http.Request {
 	return r
 }
 
+// RequestAddQuery calls Add on the request URL's query with each key value pair.
 type RequestAddQuery struct {
 	Query map[string]string
 }
@@ -34,6 +36,7 @@ func (opt RequestAddQuery) Configure(r *http.Request) *http.Request {
 	return r
 }
 
+// RequestSetHeaders calls Set on the request URL's header with each key value pair.
 type RequestSetHeaders struct {
 	Headers map[string]string
 }
@@ -44,6 +47,7 @@ func (opt RequestSetHeaders) Configure(r *http.Request) *http.Request {
 	return r
 }
 
+// RequestAddHeaders calls Add on the request URL's header with each key value pair.
 type RequestAddHeaders struct {
 	Headers map[string]string
 }
@@ -54,6 +58,7 @@ func (opt RequestAddHeaders) Configure(r *http.Request) *http.Request {
 	return r
 }
 
+// RequestContentType sets the URL's Content-Type header to the supplied string.
 type RequestContentType struct {
 	ContentType string
 }
@@ -63,9 +68,10 @@ func (opt RequestContentType) Configure(r *http.Request) *http.Request {
 	return RequestSetHeaders{Headers: map[string]string{"Content-Type": opt.ContentType}}.Configure(r)
 }
 
-type RequestJSON struct{}
+// RequestJSONContentType sets the URL's Content-Type header to "application/json; charset=utf-8".
+type RequestJSONContentType struct{}
 
-func (opt RequestJSON) Configure(r *http.Request) *http.Request {
+func (opt RequestJSONContentType) Configure(r *http.Request) *http.Request {
 	return RequestContentType{ContentType: jsonContentType}.Configure(r)
 }
 

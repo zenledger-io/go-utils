@@ -48,6 +48,8 @@ type client struct {
 	*http.Client
 }
 
+// Do is an alias to the default http client's function with the addition of optional
+// request options. Request options are applied in the order they appear in the array.
 func (c *client) Do(r *http.Request, opts ...RequestOption) (*http.Response, error) {
 	for _, opt := range opts {
 		r = opt.Configure(r)
@@ -56,6 +58,7 @@ func (c *client) Do(r *http.Request, opts ...RequestOption) (*http.Response, err
 	return c.Client.Do(r)
 }
 
+// Send creates a request from the parameters and then calls SendRequest.
 func (c *client) Send(ctx context.Context, method, url string, body io.Reader, opts ...RequestOption) (*http.Response, error) {
 	req := &Request{
 		URL:    url,
@@ -66,6 +69,7 @@ func (c *client) Send(ctx context.Context, method, url string, body io.Reader, o
 	return c.SendRequest(ctx, req, opts...)
 }
 
+// SendRequest creates a new http request, adds options, then calls Do.
 func (c *client) SendRequest(ctx context.Context, r *Request, opts ...RequestOption) (*http.Response, error) {
 	req, err := http.NewRequestWithContext(ctx, r.Method, r.URL, r.Body)
 	if err != nil {
