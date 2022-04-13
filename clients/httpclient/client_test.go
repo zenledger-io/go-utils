@@ -23,7 +23,7 @@ func TestClient_Get(t *testing.T) {
 		"when all request params are present": {
 			Query:   map[string]string{"q1": "a"},
 			Headers: map[string]string{"h1": "b"},
-			Opts:    []RequestOption{RequestJSONContentType{}},
+			Opts:    []RequestOption{RequestContentTypeJSON{}},
 			Handler: func(w http.ResponseWriter, r *http.Request) {
 				if r.Method != http.MethodGet {
 					w.WriteHeader(http.StatusBadRequest)

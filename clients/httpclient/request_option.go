@@ -68,10 +68,10 @@ func (opt RequestContentType) Configure(r *http.Request) *http.Request {
 	return RequestSetHeaders{Headers: map[string]string{"Content-Type": opt.ContentType}}.Configure(r)
 }
 
-// RequestJSONContentType sets the URL's Content-Type header to "application/json; charset=utf-8".
-type RequestJSONContentType struct{}
+// RequestContentTypeJSON sets the URL's Content-Type header to "application/json; charset=utf-8".
+type RequestContentTypeJSON struct{}
 
-func (opt RequestJSONContentType) Configure(r *http.Request) *http.Request {
+func (opt RequestContentTypeJSON) Configure(r *http.Request) *http.Request {
 	return RequestContentType{ContentType: ContentTypeJSON}.Configure(r)
 }
 
