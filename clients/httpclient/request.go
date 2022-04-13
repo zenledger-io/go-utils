@@ -1,6 +1,8 @@
 package httpclient
 
 import (
+	"bytes"
+	"encoding/json"
 	"io"
 )
 
@@ -29,4 +31,16 @@ func (r *Request) Options() []RequestOption {
 	}
 
 	return opts
+}
+
+func (r *Request) SetJSONBody(body interface{}) error {
+	b, err := json.Marshal(body)
+	if err != nil {
+		return err
+	}
+
+	r.Body = bytes.NewBuffer(b)
+	r.Opts = append(r.Opts, RequestContentTypeJSON{})
+
+	return nil
 }
