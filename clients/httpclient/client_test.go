@@ -8,24 +8,28 @@ import (
 	"testing"
 )
 
-func TestRequestGet(t *testing.T) {
+func TestClient_Get(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	c := NewDefault()
 
 	tcs := map[string]struct {
-		Query       map[string]string
-		Headers     map[string]string
-		Opts        []RequestOption
-		Handler     http.HandlerFunc
-		ConfirmFunc func(*testing.T, *http.Response, error)
+		Query   map[string]string
+		Headers map[string]string
+		Opts    []RequestOption
+		Handler http.HandlerFunc
 	}{
 		"when all request params are present": {
 			Query:   map[string]string{"q1": "a"},
 			Headers: map[string]string{"h1": "b"},
 			Opts:    []RequestOption{RequestJSON{}},
 			Handler: func(w http.ResponseWriter, r *http.Request) {
+				if r.Method != http.MethodGet {
+					w.WriteHeader(http.StatusBadRequest)
+					return
+				}
+
 				q := r.URL.Query()
 				if q.Get("q1") != "a" {
 					w.WriteHeader(http.StatusBadRequest)
@@ -44,10 +48,6 @@ func TestRequestGet(t *testing.T) {
 
 				w.WriteHeader(http.StatusOK)
 			},
-			ConfirmFunc: func(t *testing.T, r *http.Response, err error) {
-				require.Equal(t, http.StatusOK, r.StatusCode)
-				require.NoError(t, err)
-			},
 		},
 	}
 
@@ -56,9 +56,10 @@ func TestRequestGet(t *testing.T) {
 			srv := httptest.NewServer(tc.Handler)
 			defer srv.Close()
 
-			req := RequestGet(srv.URL, tc.Query, tc.Headers)
-			resp, err := req.Send(ctx, c, tc.Opts...)
-			tc.ConfirmFunc(t, resp, err)
+			opts := append(tc.Opts, RequestSetQuery{Query: tc.Query}, RequestSetHeaders{Headers: tc.Headers})
+			resp, err := c.Get(ctx, srv.URL, opts...)
+			require.Equal(t, http.StatusOK, resp.StatusCode)
+			require.NoError(t, err)
 		})
 	}
 }

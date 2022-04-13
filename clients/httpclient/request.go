@@ -1,69 +1,32 @@
 package httpclient
 
 import (
-	"context"
 	"io"
-	"net/http"
 )
 
 type Request struct {
 	URL     string
 	Method  string
+	Body    io.Reader
 	Headers map[string]string
 	Query   map[string]string
-	Body    io.Reader
+	Opts    []RequestOption
 }
 
-func RequestGet(url string, query map[string]string, headers map[string]string) *Request {
-	return &Request{
-		URL:     url,
-		Method:  http.MethodGet,
-		Headers: headers,
-		Query:   query,
-		Body:    nil,
+func (r *Request) Options() []RequestOption {
+	opts := make([]RequestOption, 0, len(r.Opts)+2)
+
+	if len(r.Opts) > 0 {
+		opts = append(opts, r.Opts...)
 	}
-}
 
-func RequestDelete(url string, query map[string]string, headers map[string]string) *Request {
-	return &Request{
-		URL:     url,
-		Method:  http.MethodDelete,
-		Headers: headers,
-		Query:   query,
-		Body:    nil,
+	if len(r.Query) > 0 {
+		opts = append(opts, RequestSetQuery{Query: r.Query})
 	}
-}
 
-func RequestPost(url string, query map[string]string, body io.Reader, headers map[string]string) *Request {
-	return &Request{
-		URL:     url,
-		Method:  http.MethodPost,
-		Headers: headers,
-		Query:   query,
-		Body:    body,
+	if len(r.Headers) > 0 {
+		opts = append(opts, RequestSetHeaders{Headers: r.Headers})
 	}
-}
 
-func RequestPatch(url string, query map[string]string, body io.Reader, headers map[string]string) *Request {
-	return &Request{
-		URL:     url,
-		Method:  http.MethodPatch,
-		Headers: headers,
-		Query:   query,
-		Body:    body,
-	}
-}
-
-func RequestPut(url string, query map[string]string, body io.Reader, headers map[string]string) *Request {
-	return &Request{
-		URL:     url,
-		Method:  http.MethodPut,
-		Headers: headers,
-		Query:   query,
-		Body:    body,
-	}
-}
-
-func (r *Request) Send(ctx context.Context, client Client, opts ...RequestOption) (*http.Response, error) {
-	return client.Send(ctx, r, opts...)
+	return opts
 }
