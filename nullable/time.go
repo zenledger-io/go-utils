@@ -5,15 +5,9 @@ import (
 	"time"
 )
 
-// Time is an alias for mysql.NullTime data type
-type Time struct {
-	sql.NullTime
-}
-
-// Time Nullable conformance
-func (n Time) IsNull() bool {
-	return !n.Valid
-}
+var (
+	DefaultTimeFormat = time.RFC3339
+)
 
 // Time convenience initializer
 func NewTime(t time.Time) Time {
@@ -33,9 +27,19 @@ func NullTime() Time {
 	}
 }
 
+// Time is an alias for mysql.NullTime data type
+type Time struct {
+	sql.NullTime
+}
+
+// Time Nullable conformance
+func (n Time) IsNull() bool {
+	return !n.Valid
+}
+
 // MarshalJSON for Time
 func (n Time) MarshalJSON() ([]byte, error) {
-	return marshalJSON(n.Time.Format(time.RFC3339), n.Valid)
+	return marshalJSON(n.Time.Format(DefaultTimeFormat), n.Valid)
 }
 
 // UnmarshalJSON for Time
